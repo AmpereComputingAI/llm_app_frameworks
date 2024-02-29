@@ -1,6 +1,6 @@
-from llama_index.llms.llama_cpp import LlamaCPP
+from llama_index.legacy.llms.llama_cpp import LlamaCPP
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
-from llama_index.llms.llama_cpp.llama_utils import (
+from llama_index.legacy.llms.llama_utils import (
     messages_to_prompt,
     completion_to_prompt,
 )
