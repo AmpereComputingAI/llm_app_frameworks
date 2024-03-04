@@ -1,11 +1,12 @@
 from llama_index.llms.llama_cpp import LlamaCPP
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
-from llama_index.llms.llama_cpp import (
+from llama_index.llms.llama_cpp.llama_utils import (
     messages_to_prompt,
     completion_to_prompt,
 )
 from llama_index.core import set_global_tokenizer
 from transformers import AutoTokenizer
+import torch
 
 model_url = "https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF/resolve/main/llama-2-7b-chat.Q4_K_M.gguf"
 
@@ -49,7 +50,7 @@ documents = SimpleDirectoryReader(
 
 # create vector store index
 print("=== Creating Vector Index....")
-index = VectorStoreIndex.from_documents(documents, embed_model=embed_model)
+index = VectorStoreIndex.from_documents(documents, embed_model=embed_model, show_progress=True)
 
 # set up query engine
 print("=== Instantiating Query Engine....")
