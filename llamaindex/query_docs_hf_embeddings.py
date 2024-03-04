@@ -42,6 +42,8 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 print("=== Loading Embedding Model....")
 embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
+embed_model._model = torch.compile(embed_model._model, backend='aio', options={"modelname": "BAAI/bge-small-en-v1.5"})
+
 # load documents
 print("=== Loading Documents....")
 documents = SimpleDirectoryReader(
