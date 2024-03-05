@@ -5,6 +5,7 @@ from langchain_community.vectorstores import Weaviate
 
 # update URL as per database server location
 weaviate_url="http://localhost:8080"
+index_name="WEAVIATE_INDEX_NAME"
 
 embeddings = HuggingFaceEmbeddings()
 
@@ -14,7 +15,7 @@ print("===> Chunking Documents ....")
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
 documents = text_splitter.split_documents(raw_documents)
 print("===> Vector store ....")
-db = Weaviate.from_documents(documents, embeddings, weaviate_url=weaviate_url)
+db = Weaviate.from_documents(documents, embeddings, weaviate_url=weaviate_url, index_name=index_name)
 
 query = "What did the president say assault weapon"
 print("===> Run Query: {} ".format(query))
