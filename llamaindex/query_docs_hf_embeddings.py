@@ -1,3 +1,4 @@
+import torch
 from llama_index.llms.llama_cpp import LlamaCPP
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
 from llama_index.llms.llama_cpp.llama_utils import (
@@ -6,7 +7,6 @@ from llama_index.llms.llama_cpp.llama_utils import (
 )
 from llama_index.core import set_global_tokenizer
 from transformers import AutoTokenizer
-import torch
 
 model_url = "https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF/resolve/main/llama-2-7b-chat.Q4_K_M.gguf"
 
@@ -18,9 +18,11 @@ set_global_tokenizer(
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 print("=== Loading Embedding Model....")
-embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
+embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-large-en-v1.5")
 
-embed_model._model = torch.compile(embed_model._model, backend='aio', options={"modelname": "BAAI/bge-small-en-v1.5"})
+torch.set_num_threads(32)
+
+embed_model._model = torch.compile(embed_model._model, backend='aio', options={"modelname": "BAAI/bge-large-en-v1.5"})
 
 # load documents
 print("=== Loading Documents....")
