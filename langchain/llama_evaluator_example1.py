@@ -1,7 +1,20 @@
-from langchain_community.embeddings import LlamaCppEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.evaluation import load_evaluator
+import time
 #embedding_model = LlamaCppEmbeddings(model_path="/onspecta/sandbox/llama.cpp/models/7B/llama-2-7b.Q4_K_M.gguf")
-embedding_model = LlamaCppEmbeddings(model_path="./models/embedding_models/bge-base-en-v1.5-ggml-model-fp16.gguf")
+
+with open("state_of_the_union.txt") as f:
+    data = f.read()
+
+
+
+embedding_model = HuggingFaceEmbeddings(model_name="BAAI/bge-base-en-v1.5")
+
+start = time.time()
+embedding = embedding_model.embed_query(data)
+end = time.time()
+
+print(end - start)
 
 llama_evaluator = load_evaluator("embedding_distance", embeddings=embedding_model)
 
