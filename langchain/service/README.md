@@ -21,5 +21,5 @@ Run application
 # python app.py
 ```
 
-Launch a Web browser and load page http://localhost/docs
+Launch a Web browser and load page http://localhost:8000/docs
 
