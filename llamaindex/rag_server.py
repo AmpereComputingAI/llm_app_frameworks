@@ -126,8 +126,7 @@ async def create_upload_file(uploaded_file: UploadFile = File(...)):
 
 @app.post("/question/")
 async def question_answer(question: str):
-    query_str = question
-    response = query_engine.query(query_str)
+    response = query_engine.query(question)
     return {"question:": f"question asked is {question} \n answer {response}"}
 
 if __name__ == '__main__':
