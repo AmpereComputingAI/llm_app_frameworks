@@ -117,7 +117,7 @@ async def create_upload_file(uploaded_file: UploadFile = File(...)):
     file_location = f"data/{uploaded_file.filename}"
     with open(file_location, "wb+") as file_object:
         file_object.write(uploaded_file.file.read())
-    documents = SimpleDirectoryReader("./data/").load_data()
+    documents = SimpleDirectoryReader(input_files=[file_location]).load_data()
     index = VectorStoreIndex.from_documents(
             documents, storage_context=storage_context, embed_model=embed_model
     )
