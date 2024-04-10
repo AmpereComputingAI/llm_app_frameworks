@@ -127,7 +127,7 @@ async def create_upload_file(uploaded_file: UploadFile = File(...)):
 @app.post("/question/")
 async def question_answer(question: str):
     response = query_engine.query(question)
-    return {"question:": f"question asked is {question} \n answer {response}"}
+    return {"question:": f"question asked is {question} . answer {response}"}
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000)
