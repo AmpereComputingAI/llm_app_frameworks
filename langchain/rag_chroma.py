@@ -43,7 +43,7 @@ rag_chain = (
          )
 rag_chain.invoke("Who is president of USA?")
 
-new_test_doc="fake_news_usa.txt"
+new_test_doc="news_usa.txt"
 new_doc = TextLoader(new_test_doc).load_and_split(text_splitter)
 ids=db.add_documents(new_doc)
 
