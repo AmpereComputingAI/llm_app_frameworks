@@ -118,6 +118,7 @@ async def create_upload_file(uploaded_file: UploadFile = File(...)):
     with open(file_location, "wb+") as file_object:
         file_object.write(uploaded_file.file.read())
     documents = SimpleDirectoryReader(input_files=[file_location]).load_data()
+    #FIXME update only VectorDB 
     index = VectorStoreIndex.from_documents(
             documents, storage_context=storage_context, embed_model=embed_model
     )
