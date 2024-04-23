@@ -33,6 +33,11 @@ class CustomAsyncHandler(AsyncCallbackHandler):
     async def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
         """Run when chain ends running."""
         print()
+    '''
+    async def on_llm_new_token(self, token: str, **kwargs) -> None:
+        """Run on new LLM token. Only available when streaming is enabled."""
+        print(token, end='')
+    '''
 
 template = """
 Question: {question}
@@ -76,7 +81,7 @@ class LlmCLI(cmd.Cmd):
     intro = 'Welcome to LlmCLI. Type "help" for available commands.'
 
     def do_question(self, line):
-        """Ask question."""
+        """Ask question e.g. >> question Who is President of USA?"""
         # invoke chain with question asked
         rag_chain.invoke(line)
 
@@ -85,7 +90,7 @@ class LlmCLI(cmd.Cmd):
         return True
         
     def do_upload(self, line):
-        """Upload text file into vectordb"""
+        """Upload text file into vectordb e.g. >> upload some_file.txt"""
         if os.path.isfile(line):
             print("Uploading ", line, end="")
             new_doc = TextLoader(line).load_and_split(text_splitter)
