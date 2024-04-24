@@ -77,11 +77,12 @@ rag_chain = (
          )
 
 class LlmCLI(cmd.Cmd):
-    prompt = '>> '
-    intro = 'Welcome to LlmCLI. Type "help" for available commands.'
+    prompt = 'llama QA >> '
+    intro = """Welcome to llama CLI. Reserved first words help, upload and quit
+               Type "help" for available commands."""
 
-    def do_question(self, line):
-        """Ask question e.g. >> question Who is President of USA?"""
+    def default(self, line):
+        """Default """
         # invoke chain with question asked
         rag_chain.invoke(line)
 
