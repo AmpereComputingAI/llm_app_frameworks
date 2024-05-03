@@ -63,6 +63,7 @@ class LlmCLI(cmd.Cmd):
         """Default """
         # invoke chain with question asked
         rag_chain.invoke(line)
+        print()
 
     def do_quit(self, line):
         """Exit the CLI."""
