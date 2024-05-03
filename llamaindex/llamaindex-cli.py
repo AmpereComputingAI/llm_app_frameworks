@@ -11,6 +11,9 @@ if not os.path.isfile(model_path):
     print("Model: ", model_path ," is not available")
     print("Please download the model in current folder")
     quit()
+# base reference code : https://docs.llamaindex.ai/en/stable/examples/low_level/oss_ingestion_retrieval/
+# changed vectored database to chromadb
+# changed document loaded to SimpleDirectoryReader
 
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, QueryBundle
 from llama_index.core.schema import NodeWithScore
