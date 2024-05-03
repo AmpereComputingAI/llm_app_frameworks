@@ -4,6 +4,12 @@ import torch
 torch.set_num_threads(32)
 import cmd
 
+model_path="llama-2-7b-chat.Q4_K_M.gguf"
+if not os.path.isfile(model_path):
+    print("Model: ", model_path ," is not available")
+    print("Please download the model in current folder")
+    quit()
+
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
 from langchain_community.embeddings       import HuggingFaceEmbeddings
 from langchain_community.vectorstores     import Chroma
@@ -30,8 +36,6 @@ text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
 documents = DirectoryLoader( "./data/").load_and_split(text_splitter)
 db = Chroma.from_documents(documents, embedding_model)
 retriever = db.as_retriever()
-
-model_path="llama-2-7b-chat.Q4_K_M.gguf"
 
 llm = LlamaCpp(
     model_path=model_path,
