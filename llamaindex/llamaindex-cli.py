@@ -5,6 +5,13 @@ os.environ["AIO_NUM_THREADS"]="32"
 import torch
 torch.set_num_threads(32)
 
+# make sure model is available
+model_path="llama-2-7b-chat.Q4_K_M.gguf"
+if not os.path.isfile(model_path):
+    print("Model: ", model_path ," is not available")
+    print("Please download the model in current folder")
+    quit()
+
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, QueryBundle
 from llama_index.core.schema import NodeWithScore
 from llama_index.core.retrievers import BaseRetriever
@@ -19,7 +26,6 @@ import chromadb
 embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en")
 embed_model._model = torch.compile(embed_model._model, backend='aio', options={"modelname": "BAAI/bge-small-en"})
 
-model_path="llama-2-7b-chat.Q4_K_M.gguf"
 llm = LlamaCPP(
     # You can pass in the URL to a GGML model to download it automatically
     model_url=None,
@@ -33,7 +39,7 @@ llm = LlamaCPP(
     generate_kwargs={},
     verbose=False,
 )
-i
+
 #load documents from data folder
 documents = SimpleDirectoryReader("./data/").load_data()
 
