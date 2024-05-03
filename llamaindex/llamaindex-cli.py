@@ -1,3 +1,16 @@
+import os
+import cmd
+os.environ["AIO_NUM_THREADS"]="32"
+
+import torch
+torch.set_num_threads(32)
+
+# make sure model is available
+model_path="llama-2-7b-chat.Q4_K_M.gguf"
+if not os.path.isfile(model_path):
+    print("Model: ", model_path ," is not available")
+    print("Please download the model in current folder")
+    quit()
 # base reference code : https://docs.llamaindex.ai/en/stable/examples/low_level/oss_ingestion_retrieval/
 # changed vectored database to chromadb
 # changed document loaded to SimpleDirectoryReader
@@ -13,31 +26,24 @@ from llama_index.vector_stores.chroma import ChromaVectorStore
 from typing import Optional, Any, List
 import chromadb
 
-import torch
-torch.set_num_threads(32)
-
 embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en")
 embed_model._model = torch.compile(embed_model._model, backend='aio', options={"modelname": "BAAI/bge-small-en"})
 
-model_url = "https://huggingface.co/TheBloke/Llama-2-13B-chat-GGUF/resolve/main/llama-2-13b-chat.Q4_0.gguf"
-
 llm = LlamaCPP(
     # You can pass in the URL to a GGML model to download it automatically
-    model_url=model_url,
-    # optionally, you can set the path to a pre-downloaded model instead of model_url
-    model_path=None,
-    temperature=0.1,
+    model_url=None,
+    # OR you can set the path to a pre-downloaded model instead of model_url
+    model_path=model_path,
+    temperature=0.7,
     max_new_tokens=256,
     # llama2 has a context window of 4096 tokens, but we set it lower to allow for some wiggle room
     context_window=3900,
     # kwargs to pass to __call__()
     generate_kwargs={},
-    # kwargs to pass to __init__()
-    # set to at least 1 to use GPU
-    model_kwargs={"n_gpu_layers": 0},
-    verbose=True,
+    verbose=False,
 )
 
+#load documents from data folder
 documents = SimpleDirectoryReader("./data/").load_data()
 
 db = chromadb.PersistentClient(path="./chroma_db")
@@ -48,32 +54,19 @@ index = VectorStoreIndex.from_documents(
     documents, storage_context=storage_context, embed_model=embed_model
 )
 
-query_str = "What did the president say about Putin in the state of the union?"
-
+query_str = "This is a test question?"
 query_embedding = embed_model.get_query_embedding(query_str)
-
-# construct vector store query
 
 query_mode = "default"
 # query_mode = "sparse"
 # query_mode = "hybrid"
 
+# vcector store
 vector_store_query = VectorStoreQuery(
     query_embedding=query_embedding, similarity_top_k=2, mode=query_mode
 )
 
-# returns a VectorStoreQueryResult
-query_result = vector_store.query(vector_store_query)
-print(query_result.nodes[0].get_content())
-
-nodes_with_scores = []
-for index, node in enumerate(query_result.nodes):
-    score: Optional[float] = None
-    if query_result.similarities is not None:
-        score = query_result.similarities[index]
-    nodes_with_scores.append(NodeWithScore(node=node, score=score))
-
-
+# retriver
 class VectorDBRetriever(BaseRetriever):
     """Retriever over a postgres vector store."""
     def __init__(
@@ -111,16 +104,38 @@ class VectorDBRetriever(BaseRetriever):
 retriever = VectorDBRetriever(
     vector_store, embed_model, query_mode="default", similarity_top_k=2
 )
+query_engine = RetrieverQueryEngine.from_args(retriever, llm=llm, streaming=True)
 
-query_engine = RetrieverQueryEngine.from_args(retriever, llm=llm)
-query_str = "Why Ukraine is in trouble?"
-response = query_engine.query(query_str)
-print(str(response))
-print(response.source_nodes[0].get_content())
+# CLI to QA
+class LlmCLI(cmd.Cmd):
+    prompt = 'llama QA >> '
+    intro = """Welcome to llama CLI. Reserved first words help, upload and quit
+               Type "help" for available commands."""
 
-# for streaming
-query_engine = RetrieverQueryEngine.from_args(retriever, llm=llm, streaming=True, similarity_top_k=1)
-response_stream = query_engine.query("What did the author do growing up?",)
-response_stream.print_response_stream()
+    def default(self, line):
+        """Default """
+        # invoke chain with question asked
+        streaming_response = query_engine.query(line)
+        for text in streaming_response.response_gen:
+            print(text, end='', flush=True)
+        print()
 
+    def do_quit(self, line):
+        """Exit the CLI."""
+        return True
+        
+    def do_upload(self, line):
+        """Upload text file into vectordb e.g. >> upload some_file.txt"""
+        if os.path.isfile(line):
+            print("Uploading ", line, end="")
+            documents = SimpleDirectoryReader(input_files=[line]).load_data()
+            index = VectorStoreIndex.from_documents(
+                    documents, storage_context=storage_context, embed_model=embed_model
+                    )
+            print(" [Done]")
+        else:
+            print("File ", line,  "not found")
+
+if __name__ == '__main__':
+    LlmCLI().cmdloop()
 
