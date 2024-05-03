@@ -17,6 +17,7 @@ Get llm_app_frameworks and checkout "asharma/rag_ref_code_base" branch.
 ```
 git clone git@github.com:AmpereComputingAI/llm_app_frameworks.git
 git checkout asharma/rag_ref_code_base
+cd llm_app_frameworks/llamaindex
 ``` 
 
 Start RAG application
