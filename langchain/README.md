@@ -1,42 +1,46 @@
-This folder contains sample applications to run LLM based application using LangChain framework along with VectorDB.
-LangChain simplify creation of applications based on large language models. VectorDB help to have long term memory.
+Install python packages:
 
-Following are test applications using different VectorDB.
 ```
-1. chromadb_example1.py
-2. faiss_example1.py
-3. weaviate_example1.py
+pip install --upgrade pip
+pip install langchain
+pip install langchain_community
+pip install sentence-transformers
+pip install transformers
+pip install sentence-transformers
+pip install llama-cpp-python
+pip install unstructured
+pip install pydantic==1.10.13
+pip install sse_starlette
+pip install chromadb
 ```
+Get llm_app_frameworks and checkout "asharma/rag_ref_code_base" branch.
+```
+git clone git@github.com:AmpereComputingAI/llm_app_frameworks.git
+git checkout asharma/rag_ref_code_base
+``` 
 
-Document used “state_of_the_union.txt”. It must be present in the same folder as test application or update the test
-application as per location of the document.  Other text document can be used in place of “state_of_the_union.txt”
-
-Following packages are required to run test applications:
+Start RAG application
 ```
-# pip install langchain
-# pip install langchain_community
-# pip install sentence-transformers
-# pip install weaviate-client
-# pip install chromadb
-# pip install faiss-cpu
-```
-
-To run test application, execute following command:
-
-# python  test_application.py
-
-Test application using Chroma as VectorDB
-```
-# python chromadb_example1.py
-```
-Test application using Faiss as VectorDB
-```
-# python faiss_example1.py
-```
-Test application using Weaviate as VectorDB
-```
-# python weaviate_example1.py
+python langchain-cli.py
 ```
 
-Notre:  “weaviate_example1.py” will look for VectorDB on local host. Make sure to start Weaviate VectorDB server on locahost.
+In QA command line ask questions.
 
+Sample Reference session
+
+```
+Welcome to llama CLI. Reserved first words help, upload and quit
+               Type "help" for available commands.
+llama QA >> Who is president of India?
+The current President of India is Ram Nath Kovind.
+llama QA >> upload news_india.txt
+Uploading  news_india.txt [Done]
+llama QA >> Who is president of India?
+Droupadi Murmu
+llama QA >> quit
+```
+
+At the time of "llama-2-7b-chat.Q4_K_M.gguf" training, president of India was "Ram Nath Kovind"
+With "upload news_india.txt", latest news regarging president of India is uploaded to RAG.
+Asking same question again provides the correct answer "Droupadi Murmu"
+ 
