@@ -1,3 +1,10 @@
+import os
+import cmd
+os.environ["AIO_NUM_THREADS"]="32"
+
+import torch
+torch.set_num_threads(32)
+
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, QueryBundle
 from llama_index.core.schema import NodeWithScore
 from llama_index.core.retrievers import BaseRetriever
@@ -8,12 +15,6 @@ from llama_index.llms.llama_cpp import LlamaCPP
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from typing import Optional, Any, List
 import chromadb
-import cmd
-import os
-os.environ["AIO_NUM_THREADS"]="32"
-
-import torch
-torch.set_num_threads(32)
 
 embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en")
 embed_model._model = torch.compile(embed_model._model, backend='aio', options={"modelname": "BAAI/bge-small-en"})
