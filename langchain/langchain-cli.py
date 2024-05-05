@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2021, Ampere Computing LLC
+
 import os
 os.environ["AIO_NUM_THREADS"]="32"
 import torch
