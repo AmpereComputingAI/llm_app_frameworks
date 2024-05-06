@@ -1,4 +1,10 @@
 import torch
+import os
+import csv
+import sys
+from pathlib import Path
+
+num_threads = int(os.environ["AIO_NUM_THREADS"])
 torch.set_num_threads(32)
 
 import time
@@ -50,16 +56,20 @@ set_global_tokenizer(
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 print("=== Loading Embedding Model....")
-model_name="BAAI/bge-small-en-v1.5"
+model_name = "BAAI/bge-small-en-v1.5" if sys.argv[1] == "small" else "BAAI/bge-base-en-v1.5"
 start = time.time()
 embed_model = HuggingFaceEmbedding(model_name=model_name)
-embed_model._model = torch.compile(embed_model._model, backend='aio', options={"modelname": model_name})
+if '_aio_profiler_print' in dir(torch._C):
+    embed_model._model = torch.compile(embed_model._model, backend='aio', options={"modelname": model_name})
 embed_time = time.time() - start
 # load documents
 print("=== Loading Documents....")
+
+start = time.time()
 documents = SimpleDirectoryReader(
-    "./data/articles/"
+    "./data/"
 ).load_data()
+document_load_time = time.time() - start
 
 # create vector store index
 print("=== Creating Vector Index....")
@@ -110,3 +120,25 @@ print(f'Time taken by query 2             {q2_time}')
 print(f'Time taken by query 3             {q3_time}')
 print(f'Time taken by query 4             {q4_time}')
 
+results = {'files': len(os.listdir("./data")),
+           'num_threads': num_threads,
+           'document_load_time': document_load_time,
+           'vector_store_time': vector_store_time,
+           'mk_query_engine_time': mk_query_engine_time,
+           'query_time_1': q1_time,
+           'query_time_2': q2_time,
+           'query_time_3': q3_time,
+           'query_time_4': q4_time}
+
+filename = Path(f"llamaindex_{model_name.split('/')[-1]}.csv")
+file_exists = os.path.isfile(filename)
+if not file_exists:
+    filename.touch()
+
+with open(filename, "a+") as csvfile:
+    headers = results.keys()
+    writer = csv.DictWriter(csvfile, fieldnames=headers)
+
+    if not file_exists:
+        writer.writeheader()
+    writer.writerow(results)

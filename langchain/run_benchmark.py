@@ -1,17 +1,24 @@
 import time
 import torch
-torch.set_num_threads(32)
+import os
+import csv
+import sys
+from pathlib import Path
+
+num_threads = int(os.environ["AIO_NUM_THREADS"])
+torch.set_num_threads(num_threads)
 
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 
-model_name="BAAI/bge-base-en-v1.5"
+model_name = "BAAI/bge-small-en-v1.5" if sys.argv[1] == "small" else "BAAI/bge-base-en-v1.5"
 embedding_model = HuggingFaceEmbeddings(model_name=model_name, show_progress=False)
 
-#embedding_model.client.forward = torch.compile(embedding_model.client.forward, backend='aio', options={"modelname": model_name})
-embedding_model.client.forward = torch.compile(embedding_model.client.forward)
+#embedding_model.client.forward = torch.compile(embedding_model.client.forward)
+if '_aio_profiler_print' in dir(torch._C):
+    embedding_model.client.forward = torch.compile(embedding_model.client.forward, backend='aio', options={"modelname": model_name})
 
 print("===> Loading Documents ....")
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
@@ -55,14 +62,29 @@ print("===> Run Query: {} ".format(query))
 start = time.time()
 docs = db.similarity_search(query)
 query_time_4 = time.time() - start
-#print(docs[0].page_content)
+# print(docs[0].page_content)
 
 
+results = {'files': len(os.listdir("./data")),
+           'num_threads': num_threads,
+           'document_load_time': document_load_time,
+           'chunking_time': chunking_time,
+           'vector_store_time': vector_store_time,
+           'query_time_1': query_time_1,
+           'query_time_2': query_time_2,
+           'query_time_3': query_time_3,
+           'query_time_4': query_time_4}
 
-print(f'document_load_time : {document_load_time}')
-print(f'chunking_time      : {chunking_time}')
-print(f'vector_store_time  : {vector_store_time}')
-print(f'query_time_1       : {query_time_1}')
-print(f'query_time_2       : {query_time_2}')
-print(f'query_time_3       : {query_time_3}')
-print(f'query_time_4       : {query_time_4}')
+filename = Path(f"langchain_{model_name.split('/')[-1]}.csv")
+file_exists = os.path.isfile(filename)
+if not file_exists:
+    filename.touch()
+
+with open(filename, "a+") as csvfile:
+    headers = results.keys()
+    writer = csv.DictWriter(csvfile, fieldnames=headers)
+
+    if not file_exists:
+        writer.writeheader()
+    writer.writerow(results)
+

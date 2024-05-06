@@ -1,0 +1,16 @@
+langchain
+langchain_community
+sentence-transformers
+weaviate-client
+transformers
+sentence-transformers
+llama-cpp-python
+unstructured
+langserve
+fastapi
+uvicorn
+pydantic==1.10.13
+sse_starlette
+torch
+chromadb
+faiss-cpu
