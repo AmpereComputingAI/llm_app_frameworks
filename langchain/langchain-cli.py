@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2024, Ampere Computing LLC
+
 import os
 os.environ["AIO_NUM_THREADS"]="32"
 import torch

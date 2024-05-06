@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2024, Ampere Computing LLC
+
 import os
 import cmd
 os.environ["AIO_NUM_THREADS"]="32"
