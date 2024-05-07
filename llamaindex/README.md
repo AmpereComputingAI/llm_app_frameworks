@@ -15,7 +15,7 @@ pip install sentence-transformers
 pip install pydantic==1.10.11
 ```
 
-Get llm_app_frameworks and checkout "asharma/rag_ref_code_base" branch.
+Get llm_app_frameworks.
 ```
 git clone git@github.com:AmpereComputingAI/llm_app_frameworks.git
 cd llm_app_frameworks/llamaindex
