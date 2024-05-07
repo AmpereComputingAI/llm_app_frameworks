@@ -11,6 +11,7 @@ pip install llama-cpp-python
 pip install unstructured
 pip install pydantic==1.10.13
 pip install sse_starlette
+pip install unstructured
 pip install chromadb
 ```
 Get llm_app_frameworks.
