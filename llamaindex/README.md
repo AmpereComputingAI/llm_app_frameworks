@@ -3,7 +3,6 @@ Install python packages:
 ```
 pip install --upgrade pip
 pip install llama-index-readers-file pymupdf
-pip install llama-index-vector-stores-postgres
 pip install llama-index-embeddings-huggingface
 pip install llama-index-llms-llama-cpp
 pip install llama-cpp-python
