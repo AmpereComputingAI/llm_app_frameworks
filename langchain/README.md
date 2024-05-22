@@ -1,24 +1,10 @@
-Install python packages:
+For best results use Ampere Optimized local-rag Docker image on OCI A1 instance.
 
 ```
-pip install --upgrade pip
-pip install langchain
-pip install langchain_community
-pip install sentence-transformers
-pip install transformers
-pip install sentence-transformers
-pip install llama-cpp-python
-pip install unstructured
-pip install pydantic==1.10.13
-pip install sse_starlette
-pip install unstructured
-pip install chromadb
+docker pull ghcr.io/amperecomputingai/local-rag:v0.0.1
+# docker run -it --rm ghcr.io/amperecomputingai/local-rag:v0.0.1
+
 ```
-Get llm_app_frameworks.
-```
-git clone git@github.com:AmpereComputingAI/llm_app_frameworks.git
-cd llm_app_frameworks/llamaindex
-``` 
 
 Start RAG application
 ```
