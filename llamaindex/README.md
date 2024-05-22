@@ -31,16 +31,13 @@ Sample Reference session
 ```
 Welcome to llama CLI. Reserved first words help, upload and quit
                Type "help" for available commands.
-llama QA >> Who is president of India?
-The current President of India is Ram Nath Kovind.
-llama QA >> upload news_india.txt
-Uploading  news_india.txt [Done]
-llama QA >> Who is president of India?
-Droupadi Murmu
-llama QA >> quit
+llama QA >> who is president of USA?
+ president of the United States is Joe Biden.
+llama QA >> upload news_usa.txt
+Uploading  news_usa.txt [Done]
+llama QA >> who is president of USA?
+ answer to the query is "Tom Cruise".
 ```
 
-At the time of "llama-2-7b-chat.Q4_K_M.gguf" training, president of India was "Ram Nath Kovind"
-With "upload news_india.txt", latest news regarging president of India is uploaded to RAG.
-Asking same question again provides the correct answer "Droupadi Murmu"
+Fake news is uploaded to RAG. Which changes the answer from "Joe Biden" to "Tom Cruise" 
 
