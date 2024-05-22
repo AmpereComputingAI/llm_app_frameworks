@@ -1,7 +1,7 @@
 For best results use Ampere Optimized local-rag Docker image on OCI A1 instance.
 
 ```
-docker pull ghcr.io/amperecomputingai/local-rag:v0.0.1
+# docker pull ghcr.io/amperecomputingai/local-rag:v0.0.1
 # docker run -it --rm ghcr.io/amperecomputingai/local-rag:v0.0.1
 
 ```
